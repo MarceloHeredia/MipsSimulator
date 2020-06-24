@@ -1,4 +1,8 @@
-﻿using System;
+﻿/**
+ * Projeto feito por Marcelo Heredia e Pedro Castro 
+ * Disciplina Organizacao e Arquitetura de Computadores 1
+ * */
+using System;
 
 namespace SimuladorMIPS
 {
