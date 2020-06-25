@@ -7,9 +7,4 @@
     <RootNamespace>MipsSimulator</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="BC\" />
-    <Folder Include="BD\" />
-  </ItemGroup>
-
 </Project>

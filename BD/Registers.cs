@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.XPath;
 
 namespace MipsSimulator.BD
 {
@@ -17,7 +18,7 @@ namespace MipsSimulator.BD
             Array.Fill<Int32>(this.registers, 0);                                     //inicializa todos registradores com valor 0
             this.regWrite = false;                                                          //Inicializa regWrite em 0
         }
-
+        
 
 
     }
