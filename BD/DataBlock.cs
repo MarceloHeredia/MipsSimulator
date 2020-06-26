@@ -25,8 +25,7 @@ namespace MipsSimulator.BD
 
         public void RunCicle()
         {
-            MUX muxAttPC = new MUX(3, changePC);
-            muxAttPC.Select(10);
+            MUX muxAttPC = new MUX(3);
             Console.WriteLine(Convert.ToString(_PC,16));
         }
 

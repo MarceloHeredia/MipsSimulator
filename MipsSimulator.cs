@@ -6,32 +6,29 @@ using MipsSimulator;
 using MipsSimulator.BD;
 using System;
 using System.IO;
-using System.Windows.Forms;
 
 namespace SimuladorMIPS
 {
     class MipsSimulator
     {
-        [STAThread]
         static void Main(string[] args)
         {
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MipsMainScreen());
             //ler arquivo .mips
 
 
+
+
+            /*
             //fazer devidos ajustes
             DataBlock proc_db = new DataBlock();
 
             proc_db.RunCicle();
-
-
+            */
+            Tests();
         }
-        private void Tests()
+        private static void Tests()
         {
-
+            /*
             var x = 0x40404004;
             Int32 y = 0b111;
             Console.WriteLine(y);
@@ -65,6 +62,13 @@ namespace SimuladorMIPS
 
             testaConv = Convert.ToChar(testacv);
             Console.WriteLine(testaConv);
+            */
+            int valor = -8;
+            var tstbin = Convert.ToString(valor, 2);
+            Console.WriteLine(tstbin);
+
+            uint valor2 = Convert.ToUInt32(tstbin, 2);
+            Console.WriteLine(valor2);
 
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 
 namespace MipsSimulator.BD
@@ -7,24 +8,51 @@ namespace MipsSimulator.BD
     class MUX
     {
         private Int32[] entries;
-        private DelegateMUX data_out;
+        private Int32? selector;
+        private Int32 size;
 
-        public MUX(Int32 size, DelegateMUX data_out )
+        /// <summary>
+        /// MUX Constructor.
+        /// Receives the size of the data array
+        /// Its a MUX N to 1.
+        /// </summary>
+        /// <param name="size">size of the array of data</param>
+        public MUX(Int32 size)
         {
+            this.size = size;
             entries = new Int32[size];
-            this.data_out = data_out;
         }
 
         /// <summary>
-        /// Este metodo funciona da seguinte forma.
-        /// Quando o MUX recebe o sinal de selecao do Bloco de Controle, ele instantaneamente devolve o valor referente por meio de um delegate
-        /// Este delegate consiste em uma chamada de funcao, esta funcao eh uma funcao criada no Bloco de Dados que faz uma modificacao onde o MUX deve modificar
-        /// Assim que for selecionado, o valor é setado no fio instantaneamente.
+        /// The control block will use this setter to select wich value must leave the MUX
         /// </summary>
-        /// <param name="selector">sinal de selecao vindo do BC</param>
-        public void Select(Int32 selector)
+        public Int32 Set
         {
-            data_out(10);
+            set
+            {
+                this.selector = value;
+            }
+        }
+
+        /// <summary>
+        /// Resets the selector and values of this MUX
+        /// </summary>
+        public void Reset()
+        {
+            this.selector = null;
+            entries = new Int32[size];
+        }
+
+        /// <summary>
+        /// Returns the value selected from the MUX by the control block
+        /// WARNING ----- It will cause an exception if the selector isn't initialized 
+        /// </summary>
+        public Int32 Value
+        {
+            get
+            {
+                return entries[selector.Value];
+            }
         }
     }
 }
