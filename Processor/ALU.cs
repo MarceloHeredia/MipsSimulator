@@ -73,6 +73,7 @@ namespace MipsSimulator.Processor
         {
             set
             {
+                Tools.Print("ALU operando 1", "0x" + Convert.ToString(value, 16).PadLeft(8, '0'));
                 _entry1 = value;
             }
         }
@@ -84,6 +85,7 @@ namespace MipsSimulator.Processor
         {
             set
             {
+                Tools.Print("ALU operando 2", "0x" + Convert.ToString(value, 16).PadLeft(8, '0'));
                 _entry2 = value;
             }
         }

@@ -104,6 +104,7 @@ namespace MipsSimulator.Processor
             {
                 if (_writeIR)
                 {
+                    Tools.Print("instr", "0x" + Convert.ToString(value, 16).PadLeft(8, '0'));
                     this._fullInstruction = Convert.ToString(value, 2).PadLeft(32, '0');
                 }
             }
@@ -117,6 +118,8 @@ namespace MipsSimulator.Processor
         //These getters are for the delegate on the mux
         public Int32 GetRt() => this.Rt;
         public Int32 GetRd() => this.Rd;
+
+
         public Int32 GetSignalExtendedImmediate() => SignalExtendedImeddiate;
 
         //Shift 2 on signal extended immediate is implemented here
@@ -130,11 +133,11 @@ namespace MipsSimulator.Processor
         public Int32 Rs => Convert.ToInt32(this._fullInstruction.Substring(6, 5));
         public Int32 Rt => Convert.ToInt32(this._fullInstruction.Substring(11, 5));
         public Int32 Rd => Convert.ToInt32(this._fullInstruction.Substring(16, 5));
-        public Int16 Immediate => Convert.ToInt16(this._fullInstruction.Substring(16, 16));
+        public Int16 Immediate => Convert.ToInt16(this._fullInstruction.Substring(16, 16),2);
         /// <summary>
         /// Signal extender is implemented here.
         /// </summary>
-        public Int32 SignalExtendedImeddiate => Convert.ToInt32(Convert.ToInt32(this._fullInstruction.Substring(16, 16)));
+        public Int32 SignalExtendedImeddiate => Convert.ToInt32(this._fullInstruction.Substring(16, 16),2);
         /// <summary>
         /// Signal Extender and Shift left 2.
         /// </summary>

@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Transactions;
 using System.IO;
-using System.Linq.Expressions;
+using System.Linq;
 
 namespace MipsSimulator.Processor
 
@@ -53,7 +47,7 @@ namespace MipsSimulator.Processor
         public NormalReg B;
         public NormalReg MDR;
         public NormalReg aluOut;
-        public Registers bRegs;
+        public Registers registers;
         public IR instrReg;
         public Memory memory;
         public ALU alu;
@@ -62,6 +56,8 @@ namespace MipsSimulator.Processor
         #endregion
         //adress after last instruction
         public UInt32 finalPC;
+        //control block indication of beq or bne on stage 3
+        public bool beqbne = false;
 
         #endregion
         //inicializar todos circuitos e fazer as respectivas conexoes de acordo 
@@ -78,7 +74,7 @@ namespace MipsSimulator.Processor
             this.A = new NormalReg("A");
             this.B = new NormalReg("B");
             this.MDR = new NormalReg("MDR");
-            this.bRegs = new Registers();
+            this.registers = new Registers();
             this.instrReg = new IR();
             this.memory = new Memory();
             this.aluOut = new NormalReg("ULA Saida");
@@ -88,7 +84,7 @@ namespace MipsSimulator.Processor
             this.finalPC = ReadFileRoutine(file, memory);
             this.pc = new PC(finalPC);
 
-            //instanciando os delegates
+            #region instanciando delegates e preenchendo os MUX
             getMDR = MDR.GetRegVal;
             getA = A.GetRegVal;
             getB = B.GetRegVal;
@@ -121,8 +117,10 @@ namespace MipsSimulator.Processor
             muxPCSrc.PlaceEntry(0, getAluResult); //posicao 0 do mux tem saida da Ula
             muxPCSrc.PlaceEntry(1, getAluOut); //posicao 1 do mux tem valor de Ula Saida
 
-            muxAluZero.PlaceEntry(0, getAluZero);
-            muxAluZero.PlaceEntry(1, getReverseAluZero);
+            muxAluZero.PlaceEntry(0, getAluZero); //posicao 0 indica saida normal, ou seja, BEQ
+            muxAluZero.PlaceEntry(1, getReverseAluZero); //posicao 1 indica inversa, ou seja, BNE
+
+            #endregion
         }
 
         /// <summary>
@@ -136,7 +134,16 @@ namespace MipsSimulator.Processor
 
             Tools.IgnoreException(() => instrReg.Instr = memory.MemData); // IR instrucao <- dado da memoria
 
-            Tools.IgnoreException(() => instrReg.Instr = memory.MemData); //MDR dado <- dado da memoria
+            Tools.IgnoreException(() => MDR.Reg = memory.MemData); //MDR dado <- dado da memoria
+
+            registers.Reg1 = instrReg.Rs;
+            registers.Reg2 = instrReg.Rt;
+
+            Tools.IgnoreException(() => registers.RegTarget = muxRegDest.Value); // registrador alvo é o resultado do mux RegDst
+
+            A.Reg = registers.Reg1;
+
+            B.Reg = registers.Reg2;
 
             Tools.IgnoreException(() => aluCtrl.Funct = instrReg.Funct); // Operacao_da_Ula  <- IR bits de Funcao
             Tools.IgnoreException(() => aluCtrl.SetAluOp()); //Seleciona operacao a realizar
@@ -149,13 +156,19 @@ namespace MipsSimulator.Processor
 
             Tools.IgnoreException(() => alu.Operate()); //manda a ula operar
 
-            Tools.IgnoreException(() => aluOut.Reg = alu.Result); //registrador ULA Saida <- resultado da ULA
+            if (!beqbne) //etapa 3 desvio condicional nao escreve em ulaSaida 
+            {
+                Tools.IgnoreException(() => aluOut.Reg = alu.Result); //registrador ULA Saida <- resultado da ULA
+            }
 
             bool aluZero = false;                               //aluZero sera 0 como padrao para evitar erros 
 
             Tools.IgnoreException(() => aluZero = Convert.ToBoolean(muxAluZero.Value)); //tenta pegar o valor de aluZero
 
-            this.pc.ChangePCValue(muxPCSrc.Value, aluZero); //nao pode ignorar excecao nesse metodo pois se chegar ao fim da execucao ele que encerrara
+            if (muxPCSrc.isSet)
+            {
+                this.pc.ChangePCValue(muxPCSrc.Value, aluZero); //nao pode ignorar excecao nesse metodo pois se chegar ao fim da execucao ele que encerrara
+            }
 
 
 

@@ -67,7 +67,7 @@ namespace MipsSimulator.Processor
             }
             get
             {
-                return _registers[_reg1];
+                return _registers[_reg2];
             }
         }
 
@@ -79,6 +79,7 @@ namespace MipsSimulator.Processor
             set
             {
                 this._regTarget = value;
+
             }
         }
 

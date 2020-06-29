@@ -32,7 +32,7 @@ namespace MipsSimulator.Processor
             {
                 this._adress = value;
                 //Print the new adress pointer on the memory
-                Tools.Print("Endereço", "0x" + Convert.ToString(_adress).PadLeft(8, '0'));
+                Tools.Print("Endereço", "0x" + Convert.ToString(_adress,16).PadLeft(8, '0'));
             }
             get
             {

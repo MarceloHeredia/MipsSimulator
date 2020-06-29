@@ -19,6 +19,7 @@ namespace MipsSimulator.Processor
         public delegate void DelegateBCBool(bool signal);
         public delegate void DelegateBCInt32(Int32 signal);
         public delegate void DelegateBCByte(Byte signal);
+        public delegate void DelegateResetMux();
 
         public static void Print(String name, String value)
         {

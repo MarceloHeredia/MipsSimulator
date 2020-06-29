@@ -28,14 +28,22 @@ namespace MipsSimulator.Processor
         /// </summary>
         public void Set(int value) => this.selector = value;
 
+        //tells the datablock if the selector is set by the control block
+        public Boolean isSet
+        {
+            get
+            {
+                if (this.selector != null)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
         /// <summary>
         /// Resets the selector and values of this MUX
         /// </summary>
-        public void Reset()
-        {
-            this.selector = null;
-            mxEntries = new Tools.DelegateMUX[size];
-        }
+        public void Reset() => this.selector = null;
 
         /// <summary>
         /// Returns the value selected from the MUX by the control block
