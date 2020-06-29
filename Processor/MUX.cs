@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
-namespace MipsSimulator.BD
+namespace MipsSimulator.Processor
 {
-    class MUX
+    public class MUX
     {
-        private Int32[] entries;
+        private Tools.DelegateMUX[] mxEntries;
         private Int32? selector;
         private Int32 size;
 
@@ -20,19 +20,13 @@ namespace MipsSimulator.BD
         public MUX(Int32 size)
         {
             this.size = size;
-            entries = new Int32[size];
+            mxEntries = new Tools.DelegateMUX[size];
         }
 
         /// <summary>
         /// The control block will use this setter to select wich value must leave the MUX
         /// </summary>
-        public Int32 Set
-        {
-            set
-            {
-                this.selector = value;
-            }
-        }
+        public void Set(int value) => this.selector = value;
 
         /// <summary>
         /// Resets the selector and values of this MUX
@@ -40,19 +34,20 @@ namespace MipsSimulator.BD
         public void Reset()
         {
             this.selector = null;
-            entries = new Int32[size];
+            mxEntries = new Tools.DelegateMUX[size];
         }
 
         /// <summary>
         /// Returns the value selected from the MUX by the control block
         /// WARNING ----- It will cause an exception if the selector isn't initialized 
         /// </summary>
-        public Int32 Value
-        {
-            get
-            {
-                return entries[selector.Value];
-            }
-        }
+        public Int32 Value => mxEntries[selector.Value]();
+
+        /// <summary>
+        /// Place the delegate on the position of index
+        /// </summary>
+        /// <param name="index">position to put the delegate</param>
+        /// <param name="mx">declared delegate</param>
+        public void PlaceEntry(Int32 index, Tools.DelegateMUX mx) => mxEntries[index] = mx;
     }
 }

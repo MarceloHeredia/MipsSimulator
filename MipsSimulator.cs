@@ -3,9 +3,10 @@
  * Disciplina Organizacao e Arquitetura de Computadores 1
  * */
 using MipsSimulator;
-using MipsSimulator.BD;
+using MipsSimulator.Processor;
 using System;
 using System.IO;
+using System.Linq.Expressions;
 
 namespace SimuladorMIPS
 {
@@ -13,19 +14,36 @@ namespace SimuladorMIPS
     {
         static void Main(string[] args)
         {
-            //ler arquivo .mips
+            try
+            {
+
+                //ler arquivo .mips
+                var separator = Path.DirectorySeparatorChar;
+                string file;
+                if (args.Length > 0)
+                {
+                    file = args[0];
+                }
+                else
+                {
+                    Console.WriteLine("Digite o arquivo junto com o caminho completo: ");
+                    //file = Console.ReadLine();
+                    file = String.Format("C:{0}libs{0}school{0}repo{0}teste.mips",separator);
+                }
+                ControlBlock bloco_controle = new ControlBlock(file);
 
 
 
-
-            /*
-            //fazer devidos ajustes
-            DataBlock proc_db = new DataBlock();
-
-            proc_db.RunCicle();
-            */
-            Tests();
+                //Tests();
+                Console.ReadKey();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.ReadKey();
+            }
         }
+   
         private static void Tests()
         {
             /*
@@ -63,13 +81,56 @@ namespace SimuladorMIPS
             testaConv = Convert.ToChar(testacv);
             Console.WriteLine(testaConv);
             */
-            int valor = -8;
-            var tstbin = Convert.ToString(valor, 2);
-            Console.WriteLine(tstbin);
+            //Int32 valor = 8;
+            //var tstbin = Convert.ToString(valor, 2);
+            //Console.WriteLine(tstbin);
 
-            uint valor2 = Convert.ToUInt32(tstbin, 2);
-            Console.WriteLine(valor2);
+            //var valor2 = Convert.ToInt32(tstbin, 2);
+            //Console.WriteLine(valor2);
 
+
+
+
+            //var srl = "0x0019c842";
+            //var sll = "0x0019c880";
+
+            //var srlb = "00000000000110011100100001000010";
+            //var srlbc = "00000011001000001100100001000010";
+            //var sllb = "00000000000110011100100010000000";
+            //var sllbc = "00000011001000001100100010000000";
+
+            //Console.WriteLine(DataBlock.RepairShifts(sll, sllb, sllbc));
+
+
+
+            ////eh assim que faz o immediato ficar negativo na conversao!
+            //string teste = "1011111111111110";
+            //Console.WriteLine(Convert.ToInt32(Convert.ToInt16(teste,2)));
+
+
+            //UInt32 x = 268501004;
+            //Console.WriteLine(Convert.ToString(Convert.ToInt32(x),2).PadLeft(32,'0'));
+
+            //Int32 testeShift = Convert.ToInt32("00000000000000001111111111111111",2);
+            //Console.WriteLine(testeShift);
+
+            //var b = testeShift << 16;
+
+            //Console.WriteLine(Convert.ToString(b,2).PadLeft(32,'0'));
+            //LUI EH ASSIM
+
+
+            //var zero = 0;
+
+            //var notzero = Convert.ToInt32(!Convert.ToBoolean(zero));
+
+            //Console.WriteLine(zero);
+            //Console.WriteLine(notzero);
+
+
+            var x = -5;
+            Console.WriteLine("0x"+Convert.ToString(x,16).PadLeft(8,'0'));
         }
+
     }
 }
