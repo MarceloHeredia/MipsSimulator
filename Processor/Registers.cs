@@ -95,7 +95,7 @@ namespace MipsSimulator.Processor
                 {
                     _registers[_regTarget] = value;
                     //Print the change on console.
-                    Console.WriteLine(String.Format("${0} = {1}",_regTarget,value));
+                    Tools.Print(String.Format("${0}", _regTarget), "0x"+Convert.ToString(value,16).PadLeft(8,'0'));
                 }
             }
         }

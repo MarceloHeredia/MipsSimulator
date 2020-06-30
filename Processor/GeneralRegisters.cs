@@ -9,9 +9,9 @@ namespace MipsSimulator.Processor
     /// </summary>
     public class PC
     {
-        public static Int32 _pc = Tools.defaultIniPC;
-        private static Boolean _writePC = false;
-        private static Boolean _writeCondPC = false;
+        public Int32 _pc = Tools.defaultIniPC;
+        private  Boolean _writePC = false;
+        private  Boolean _writeCondPC = false;
         private UInt32 _endExecution;
 
         public PC(UInt32 endExecution)
@@ -19,17 +19,17 @@ namespace MipsSimulator.Processor
             _endExecution = endExecution;
         }
 
-        public static Int32 GetPCValue() => _pc;
+        public Int32 GetPCValue() => this. _pc;
 
         /// <summary>
         /// Sinal enviado pelo Bloco de Controle PCEsc
         /// </summary>
-        public static void SetWritePC(bool value) => _writePC = value;
+        public void SetWritePC(bool value) => _writePC = value;
 
         /// <summary>
         /// Sinal enviado pelo Bloco de Controle PCEscCond
         /// </summary>
-        public static void SetWriteCondPC(bool value) => _writeCondPC = value;
+        public void SetWriteCondPC(bool value) => _writeCondPC = value;
 
         /// <summary>
         /// Method <c>ChangePCValue</c> foi criado para trocar o valor do PC por meio de função
@@ -130,14 +130,14 @@ namespace MipsSimulator.Processor
         /// Getters of the string parts of the instruction
         /// </summary>
         public String OpCode => this._fullInstruction.Substring(0, 6);
-        public Int32 Rs => Convert.ToInt32(this._fullInstruction.Substring(6, 5));
-        public Int32 Rt => Convert.ToInt32(this._fullInstruction.Substring(11, 5));
-        public Int32 Rd => Convert.ToInt32(this._fullInstruction.Substring(16, 5));
+        public Int32 Rs => Convert.ToInt32(this._fullInstruction.Substring(6, 5),2);
+        public Int32 Rt => Convert.ToInt32(this._fullInstruction.Substring(11, 5),2);
+        public Int32 Rd => Convert.ToInt32(this._fullInstruction.Substring(16, 5),2);
         public Int16 Immediate => Convert.ToInt16(this._fullInstruction.Substring(16, 16),2);
         /// <summary>
         /// Signal extender is implemented here.
         /// </summary>
-        public Int32 SignalExtendedImeddiate => Convert.ToInt32(this._fullInstruction.Substring(16, 16),2);
+        public Int32 SignalExtendedImeddiate => Convert.ToInt32(Immediate);
         /// <summary>
         /// Signal Extender and Shift left 2.
         /// </summary>

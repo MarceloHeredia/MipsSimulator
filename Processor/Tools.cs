@@ -23,7 +23,12 @@ namespace MipsSimulator.Processor
 
         public static void Print(String name, String value)
         {
-            Console.WriteLine("{0} <- {1}", name.PadRight(10), value);
+            Console.WriteLine("{0} <- {1}", name.PadRight(20), value);
+        }
+        public static void PrintControlSignal(string sname, Int32 value, int digitos = 1)
+        {
+            string strvalue = Convert.ToString(value, 2).PadLeft(digitos, '0');
+            Console.WriteLine(String.Format("{0} -> {1}", sname.PadRight(20), strvalue));
         }
 
         public static void IgnoreException(Action act)
@@ -32,7 +37,22 @@ namespace MipsSimulator.Processor
             {
                 act.Invoke();
             }
-            catch (Exception e) { Console.WriteLine(e.Message); }
+            catch { }
+        }
+
+        public enum RType
+        {
+            xor = 0x26,
+            addu = 0x21,
+            and = 0x24,
+            sll = 0x0,
+            srl = 0x2,
+            slt = 0x2A
+        };
+
+        public static void TellInstructionR(byte funct)
+        {
+            Console.WriteLine("Instrução - "+Enum.GetName(typeof(RType), (RType)funct).ToUpper());
         }
     }
 

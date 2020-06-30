@@ -26,7 +26,7 @@ namespace MipsSimulator.Processor
                     _res = _entry1 + _entry2;
                     break;
                 case Operation.sub:
-                    _res = _entry1 + _entry2;
+                    _res = _entry1 - _entry2;
                     break;
                 case Operation.slt:
                     if (_entry1 < _entry2)
@@ -53,6 +53,7 @@ namespace MipsSimulator.Processor
                 default: break;
             }
             _zero = _res == 0 ? 1 : 0;
+            Tools.Print("ALU zero", Convert.ToString(_zero));
         }
 
         /// <summary>
@@ -63,6 +64,7 @@ namespace MipsSimulator.Processor
             set
             {
                 _op = value;
+                Tools.Print("ALU Operation",Enum.GetName(typeof(Operation), _op));
             }
         }
 

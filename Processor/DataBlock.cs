@@ -11,7 +11,7 @@ namespace MipsSimulator.Processor
         #region Variables Declaration
         #region getter delegates
         //mux and mux's delegates
-        Tools.DelegateMUX getPC = PC.GetPCValue; //teste...
+        Tools.DelegateMUX getPC;//teste...
         Tools.DelegateMUX getAluOut;
         Tools.DelegateMUX get4 = Get4;
 
@@ -85,6 +85,7 @@ namespace MipsSimulator.Processor
             this.pc = new PC(finalPC);
 
             #region instanciando delegates e preenchendo os MUX
+            getPC = pc.GetPCValue;
             getMDR = MDR.GetRegVal;
             getA = A.GetRegVal;
             getB = B.GetRegVal;
@@ -130,16 +131,24 @@ namespace MipsSimulator.Processor
         public void RunCicle()
         {//TEST EXECUTION FIRST CICLE!
             //tenta colocar o valor do mux IouD no endereco de memoria
-            Tools.IgnoreException(() => memory.Adress = Convert.ToUInt32(muxIorD.Value));
+            if (muxIorD.isSet)
+            {
+                Tools.IgnoreException(() => memory.Adress = Convert.ToUInt32(muxIorD.Value));
+            }
 
-            Tools.IgnoreException(() => instrReg.Instr = memory.MemData); // IR instrucao <- dado da memoria
+            if (memory.ReadAllowed)
+            {
+                Tools.IgnoreException(() => instrReg.Instr = memory.MemData); // IR instrucao <- dado da memoria
 
-            Tools.IgnoreException(() => MDR.Reg = memory.MemData); //MDR dado <- dado da memoria
+                Tools.IgnoreException(() => MDR.Reg = memory.MemData); //MDR dado <- dado da memoria
+            }
 
             registers.Reg1 = instrReg.Rs;
             registers.Reg2 = instrReg.Rt;
 
             Tools.IgnoreException(() => registers.RegTarget = muxRegDest.Value); // registrador alvo é o resultado do mux RegDst
+
+            Tools.IgnoreException(() => registers.Write = muxMemtoReg.Value);
 
             A.Reg = registers.Reg1;
 
@@ -169,7 +178,6 @@ namespace MipsSimulator.Processor
             {
                 this.pc.ChangePCValue(muxPCSrc.Value, aluZero); //nao pode ignorar excecao nesse metodo pois se chegar ao fim da execucao ele que encerrara
             }
-
 
 
         }

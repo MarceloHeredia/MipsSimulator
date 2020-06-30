@@ -18,8 +18,6 @@ namespace MipsSimulator.Processor
 
 
         #region signal delegates
-        Tools.DelegateBCBool sPCEsc = PC.SetWritePC;
-        Tools.DelegateBCBool sPCEscCond = PC.SetWriteCondPC;
         // nao estaticos
         Tools.DelegateBCInt32 sIouD;
         Tools.DelegateBCBool sLerMem;
@@ -33,6 +31,8 @@ namespace MipsSimulator.Processor
         Tools.DelegateBCBool sEscReg;
         Tools.DelegateBCInt32 sRegDst;
         Tools.DelegateBCInt32 sBeqOrBne; //select between beq and bne on bit zero of alu 
+        Tools.DelegateBCBool sPCEsc;
+        Tools.DelegateBCBool sPCEscCond;
 
         Tools.DelegateResetMux rstIouD;
         Tools.DelegateResetMux rstMemParaReg;
@@ -46,7 +46,9 @@ namespace MipsSimulator.Processor
 
         public ControlBlock(String file)
         {
-            dt = new DataBlock(file);
+            dt = new DataBlock(file); 
+            sPCEsc = dt.pc.SetWritePC;
+            sPCEscCond = dt.pc.SetWriteCondPC;
             sIouD = dt.muxIorD.Set;
             sLerMem = dt.memory.SetReadMem;
             sEscMem = dt.memory.SetWriteMem;
@@ -112,28 +114,71 @@ namespace MipsSimulator.Processor
             {
                 while (true) //fica em loop ate PC jogar a exceção de fim de execução
                 {
+                    Console.Write("Pressione Enter para iniciar o ciclo!");
+                    WaitToContinue(ConsoleKey.Enter);
                     this.ResetSignals();
                     this.ExecuteFstCicle();
-                    Console.Write("Pressione Enter para avançar ao próximo ciclo!");
+
+                    Console.Write("\n\n\n\n\n\nPressione Enter para avançar ao próximo ciclo!");
                     WaitToContinue(ConsoleKey.Enter);
                     this.ResetSignals();
                     this.ExecuteSndCicle();
-                    Console.Write("Pressione Enter para avançar ao próximo ciclo!");
+                    Console.Write("\n\n\n\n\n\nPressione Enter para avançar ao próximo ciclo!");
                     WaitToContinue(ConsoleKey.Enter);
                     this.ResetSignals();
                     this.Execute3Cicle();
 
                     if (has4cicle)
                     {
-                        Console.Write("Pressione Enter para avançar ao próximo ciclo!");
+                        Console.Write("\n\n\n\n\n\nPressione Enter para avançar ao próximo ciclo!");
                         WaitToContinue(ConsoleKey.Enter);
                         this.ResetSignals();
                         this.Execute4Cicle();
                     }
                     if (has5cicle)
                     {
-                        Console.Write("Pressione Enter para avançar ao próximo ciclo!");
+                        Console.Write("\n\n\n\n\n\nPressione Enter para avançar ao próximo ciclo!");
                         WaitToContinue(ConsoleKey.Enter);
+                        this.ResetSignals();
+                        this.Execute5Cicle();
+                    }
+                    Console.WriteLine("\n\n\n\n\n\n");
+                }
+
+            }
+            catch (ExecutionOverException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        private void InstructionExecution()
+        {
+            try
+            {
+                while (true) //fica em loop ate PC jogar a exceção de fim de execução
+                {
+                    Console.Write("\n\n\n\nPressione Enter para iniciar a instrução");
+                    WaitToContinue(ConsoleKey.Enter);
+                    this.ResetSignals();
+                    this.ExecuteFstCicle();
+
+                    Console.WriteLine("\n");
+                    this.ResetSignals();
+                    this.ExecuteSndCicle();
+
+                    Console.WriteLine("\n");
+                    this.ResetSignals();
+                    this.Execute3Cicle();
+
+                    if (has4cicle)
+                    {
+                        Console.WriteLine("\n");
+                        this.ResetSignals();
+                        this.Execute4Cicle();
+                    }
+                    if (has5cicle)
+                    {
+                        Console.WriteLine("\n");
                         this.ResetSignals();
                         this.Execute5Cicle();
                     }
@@ -145,10 +190,6 @@ namespace MipsSimulator.Processor
             {
                 Console.WriteLine(ex.Message);
             }
-        }
-        private void InstructionExecution()
-        {
-
         }
         private void AllExecution()
         {
@@ -163,26 +204,21 @@ namespace MipsSimulator.Processor
             Console.WriteLine("Sinais do Bloco de Controle:");
             //IouD = 0, LerMem = 1, ULAFonteA = 0, ULAFonteB = 01, ULAOp = 000, PCEsc = 1, IREsc = 1, FontePC = 0
             sLerMem(true);
-            PrintControlSignal("LerMem", 1);
+            Tools.PrintControlSignal("LerMem", 1);
             sULAFonteA(0);
-            PrintControlSignal("ULAFonteA", 0);
+            Tools.PrintControlSignal("ULAFonteA", 0);
             sIouD(0);
-            PrintControlSignal("IouD", 0);
+            Tools.PrintControlSignal("IouD", 0);
             sIREsc(true);
-            PrintControlSignal("IRESC", 1);
+            Tools.PrintControlSignal("IREsc", 1);
             sULAFonteB(1);
-            PrintControlSignal("ULAFonteB", 1, 2);
+            Tools.PrintControlSignal("ULAFonteB", 1, 2);
             sULAOp(0b000);
-            PrintControlSignal("ULAOp", 0, 3);
+            Tools.PrintControlSignal("ULAOp", 0, 3);
             sPCEsc(true);
-            PrintControlSignal("PCEsc", 1, 1);
+            Tools.PrintControlSignal("PCEsc", 1, 1);
             sFontePC(0);
-            PrintControlSignal("FontePC", 0, 1);
-
-            //setando os nao necessarios em false pois o default dos valores eh 0
-            //os mux serao deixados default a principio
-            sEscMem(false);
-            sEscReg(false);
+            Tools.PrintControlSignal("FontePC", 0, 1);
 
             dt.RunCicle();
         }
@@ -191,13 +227,12 @@ namespace MipsSimulator.Processor
         {
             Console.WriteLine("\nCiclo 2");
             Console.WriteLine("Sinais do Bloco de Controle:");
-            //IouD = 0, LerMem = 1, ULAFonteA = 0, ULAFonteB = 01, ULAOp = 000, PCEsc = 1, IREsc = 1, FontePC = 0
             sULAFonteA(0);
-            PrintControlSignal("ULAFonteA", 0);
+            Tools.PrintControlSignal("ULAFonteA", 0);
             sULAFonteB(0b11);
-            PrintControlSignal("ULAFonteB", 3, 2);
+            Tools.PrintControlSignal("ULAFonteB", 3, 2);
             sULAOp(0b000); //add
-            PrintControlSignal("ULAOp", 0, 3);
+            Tools.PrintControlSignal("ULAOp", 0, 3);
 
             dt.RunCicle();
             this.funct = Convert.ToByte(dt.instrReg.Funct, 2);
@@ -206,6 +241,8 @@ namespace MipsSimulator.Processor
 
         private void Execute3Cicle()
         {
+            Console.WriteLine("\nCiclo 3");
+            Console.WriteLine("Sinais do Bloco de Controle:");
             switch (opCode)
             {
                 case 0x23: //lw
@@ -213,110 +250,130 @@ namespace MipsSimulator.Processor
                     has4cicle = true;
                     has5cicle = true;
                     sULAFonteA(1);
-                    PrintControlSignal("ULAFonteA", 1);
+                    Tools.PrintControlSignal("ULAFonteA", 1);
                     sULAFonteB(2);
-                    PrintControlSignal("ULAFonteB", 2, 2);
+                    Tools.PrintControlSignal("ULAFonteB", 2, 2);
                     sULAOp(0b000);
-                    PrintControlSignal("ULAOp", 0, 3);
+                    Tools.PrintControlSignal("ULAOp", 0, 3);
                     break;
                 case 0x2B: //sw
                     Console.WriteLine("Instrução - SW");
                     has4cicle = true;
+                    has5cicle = false;
                     sULAFonteA(1);
-                    PrintControlSignal("ULAFonteA", 1);
+                    Tools.PrintControlSignal("ULAFonteA", 1);
                     sULAFonteB(2);
-                    PrintControlSignal("ULAFonteB", 2, 2);
+                    Tools.PrintControlSignal("ULAFonteB", 2, 2);
                     sULAOp(0b000);
-                    PrintControlSignal("ULAOp", 0, 3);
+                    Tools.PrintControlSignal("ULAOp", 0, 3);
                     break;
                 case 0x0: //Tipo R
-                    Console.WriteLine("Instrução - Tipo R");
+                    Console.WriteLine("Instrução Tipo R");
+                    Tools.TellInstructionR(this.funct);
                     has4cicle = true;
+                    has5cicle = false;
                     if (TestaShift())//se for shift
                     {
+
                         sULAFonteA(1); //RS e RT foram invertidos
-                        PrintControlSignal("ULAFonteA", 1);
+                        Tools.PrintControlSignal("ULAFonteA", 1);
                         sULAFonteB(0b10);
-                        PrintControlSignal("ULAFonteB", 0b10, 2);
+                        Tools.PrintControlSignal("ULAFonteB", 0b10, 2);
                         sULAOp(0b010);
-                        PrintControlSignal("ULAOp", 0b010, 3);
+                        Tools.PrintControlSignal("ULAOp", 0b010, 3);
                     }
                     else //instrucao normal..
                     {
                         sULAFonteA(1);
-                        PrintControlSignal("ULAFonteA", 1);
+                        Tools.PrintControlSignal("ULAFonteA", 1);
                         sULAFonteB(0B00);
-                        PrintControlSignal("ULAFonteB", 0, 2);
+                        Tools.PrintControlSignal("ULAFonteB", 0, 2);
                         sULAOp(0b010);
-                        PrintControlSignal("ULAOp", 0b010, 3);
+                        Tools.PrintControlSignal("ULAOp", 0b010, 3);
                     }
                     break;
                 case 0x9: //addiu
+                    has4cicle = true;
+                    has5cicle = false;
                     Console.WriteLine("Instrução - ADDIU");
                     sULAFonteA(1);
-                    PrintControlSignal("ULAFonteA", 1);
+                    Tools.PrintControlSignal("ULAFonteA", 1);
                     sULAFonteB(0b10);
-                    PrintControlSignal("ULAFonteB", 0b10, 2);
+                    Tools.PrintControlSignal("ULAFonteB", 0b10, 2);
                     sULAOp(0b000);
-                    PrintControlSignal("ULAOp", 0b000, 3);
+                    Tools.PrintControlSignal("ULAOp", 0b000, 3);
                     break;
                 case 0xC: //andi
+                    has4cicle = true;
+                    has5cicle = false;
                     Console.WriteLine("Instrução - ANDI");
                     sULAFonteA(1);
-                    PrintControlSignal("ULAFonteA", 1);
+                    Tools.PrintControlSignal("ULAFonteA", 1);
                     sULAFonteB(0b10);
-                    PrintControlSignal("ULAFonteB", 0b10, 2);
+                    Tools.PrintControlSignal("ULAFonteB", 0b10, 2);
                     sULAOp(0b011); //and
-                    PrintControlSignal("ULAOp", 0b011, 3);
+                    Tools.PrintControlSignal("ULAOp", 0b011, 3);
                     break;
                 case 0xD: //ori
+                    has4cicle = true;
+                    has5cicle = false;
                     Console.WriteLine("Instrução - ORI");
                     sULAFonteA(1);
-                    PrintControlSignal("ULAFonteA", 1);
+                    Tools.PrintControlSignal("ULAFonteA", 1);
                     sULAFonteB(0b10);
-                    PrintControlSignal("ULAFonteB", 0b10, 2);
+                    Tools.PrintControlSignal("ULAFonteB", 0b10, 2);
                     sULAOp(0b100); //or
-                    PrintControlSignal("ULAOp", 0b100, 3);
+                    Tools.PrintControlSignal("ULAOp", 0b100, 3);
                     break;
                 case 0xF: //lui
+                    has4cicle = true;
+                    has5cicle = false;
                     Console.WriteLine("Instrução - LUI");
                     sULAFonteA(1);
-                    PrintControlSignal("ULAFonteA", 1);
+                    Tools.PrintControlSignal("ULAFonteA", 1);
                     sULAFonteB(0b10);
-                    PrintControlSignal("ULAFonteB", 0b10, 2);
+                    Tools.PrintControlSignal("ULAFonteB", 0b10, 2);
                     sULAOp(0b101);  //lui
-                    PrintControlSignal("ULAOp", 0b101, 3);
+                    Tools.PrintControlSignal("ULAOp", 0b101, 3);
                     break;
                 case 0x4: //beq
+                    has4cicle = false;
+                    has5cicle = false;
                     Console.WriteLine("Instrução - BEQ");
                     sPCEsc(false);
-                    PrintControlSignal("PCEsc", 0);
+                    Tools.PrintControlSignal("PCEsc", 0);
                     sPCEscCond(true);
-                    PrintControlSignal("PCEscCond", 1);
+                    Tools.PrintControlSignal("PCEscCond", 1);
                     sFontePC(1);
-                    PrintControlSignal("FontePC", 1);
+                    Tools.PrintControlSignal("FontePC", 1);
                     sULAFonteA(1);
-                    PrintControlSignal("ULAFonteA", 1);
+                    Tools.PrintControlSignal("ULAFonteA", 1);
                     sULAFonteB(0b00);
-                    PrintControlSignal("ULAFonteB", 0b00, 2);
+                    Tools.PrintControlSignal("ULAFonteB", 0b00, 2);
+                    sULAOp(0b001);
+                    Tools.PrintControlSignal("ULAOp", 0b001, 3);
                     sBeqOrBne(0);
-                    PrintControlSignal("BeqOrBne", 0);
+                    Tools.PrintControlSignal("BeqOrBne", 0);
                     dt.beqbne = true;
                     break;
                 case 0x5: //bne
+                    has4cicle = false;
+                    has5cicle = false;
                     Console.WriteLine("Instrução - BNE");
                     sPCEsc(false);
-                    PrintControlSignal("PCEsc", 0);
+                    Tools.PrintControlSignal("PCEsc", 0);
                     sPCEscCond(true);
-                    PrintControlSignal("PCEscCond", 1);
+                    Tools.PrintControlSignal("PCEscCond", 1);
                     sFontePC(1);
-                    PrintControlSignal("FontePC", 1);
+                    Tools.PrintControlSignal("FontePC", 1);
                     sULAFonteA(1);
-                    PrintControlSignal("ULAFonteA", 1);
+                    Tools.PrintControlSignal("ULAFonteA", 1);
                     sULAFonteB(0b00);
-                    PrintControlSignal("ULAFonteB", 0b00, 2);
-                    sBeqOrBne(0);
-                    PrintControlSignal("BeqOrBne", 1);
+                    Tools.PrintControlSignal("ULAFonteB", 0b00, 2);
+                    sULAOp(0b001);
+                    Tools.PrintControlSignal("ULAOp", 0b001, 3);
+                    sBeqOrBne(1);
+                    Tools.PrintControlSignal("BeqOrBne", 1);
                     dt.beqbne = true;
 
                     break;
@@ -326,29 +383,40 @@ namespace MipsSimulator.Processor
 
         private void Execute4Cicle()
         {
+            Console.WriteLine("\nCiclo 4");
+            Console.WriteLine("Sinais do Bloco de Controle:");
             switch (opCode)
             {
                 case 0x23:
                     sIouD(1);
-                    PrintControlSignal("IouD", 1);
+                    Tools.PrintControlSignal("IouD", 1);
                     sLerMem(true);
-                    PrintControlSignal("LerMem",1);
+                    Tools.PrintControlSignal("LerMem",1);
                     break;
                 case 0x2B:
                     sIouD(1);
-                    PrintControlSignal("IouD", 1);
+                    Tools.PrintControlSignal("IouD", 1);
                     sEscMem(true);
-                    PrintControlSignal("EscMem", 1);
+                    Tools.PrintControlSignal("EscMem", 1);
                     break;
                 case 0x0:
+                    sEscReg(true);
+                    Tools.PrintControlSignal("EscReg", 1);
+                    sMemParaReg(0);
+                    Tools.PrintControlSignal("MemParaReg", 0);
+                    sRegDst(1);
+                    Tools.PrintControlSignal("RegDst", 1);
+                    break;
                 case 0x9: //addiu
                 case 0xC: //andi
                 case 0xD: //ori
                 case 0xF: //lui
+                    sEscReg(true);
+                    Tools.PrintControlSignal("EscReg", 1);
                     sMemParaReg(0);
-                    PrintControlSignal("MemParaReg", 0);
-                    sRegDst(1);
-                    PrintControlSignal("RegDst", 1);
+                    Tools.PrintControlSignal("MemParaReg", 0);
+                    sRegDst(0);
+                    Tools.PrintControlSignal("RegDst", 0);
                     break;
             }
             dt.RunCicle();
@@ -356,10 +424,14 @@ namespace MipsSimulator.Processor
 
         private void Execute5Cicle()//lw
         {
+            Console.WriteLine("\nCiclo 5");
+            Console.WriteLine("Sinais do Bloco de Controle:");
             sMemParaReg(1);
-            PrintControlSignal("MemParaReg", 1);
+            Tools.PrintControlSignal("MemParaReg", 1);
             sRegDst(0);
-            PrintControlSignal("RegDst", 0);
+            Tools.PrintControlSignal("RegDst", 0);
+            sEscReg(true);
+            Tools.PrintControlSignal("EscReg", 1);
             dt.RunCicle();
         }
 
@@ -399,11 +471,6 @@ namespace MipsSimulator.Processor
             while (Console.ReadKey(true).Key != key) { }
         }
 
-        private void PrintControlSignal(string sname, Int32 value, int digitos = 1)
-        {
-            string strvalue = Convert.ToString(value, 2).PadLeft(digitos, '0');
-            Console.WriteLine(String.Format("{0} -> {1}", sname.PadRight(10), strvalue));
-        }
         //metodo para zerar todas saidas para iniciar proxima instrucao
 
     }

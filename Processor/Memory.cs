@@ -70,6 +70,8 @@ namespace MipsSimulator.Processor
         /// </summary>
         public void SetReadMem(bool value) => this._readMem = value;
 
+        public bool ReadAllowed => this._readMem;
+
         /// <summary>
         /// Writes memory from the file reader (only used to fill memory with instructions and .data at the start of the execution)
         /// </summary>

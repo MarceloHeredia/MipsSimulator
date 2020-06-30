@@ -5,6 +5,7 @@
 using MipsSimulator;
 using MipsSimulator.Processor;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq.Expressions;
 
@@ -30,6 +31,7 @@ namespace SimuladorMIPS
                     //file = Console.ReadLine();
                     file = String.Format("C:{0}libs{0}school{0}repo{0}teste.mips",separator);
                 }
+
                 ControlBlock bloco_controle = new ControlBlock(file);
 
                 Console.ReadKey();
