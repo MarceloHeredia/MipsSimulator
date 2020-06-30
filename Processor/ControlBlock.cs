@@ -193,7 +193,39 @@ namespace MipsSimulator.Processor
         }
         private void AllExecution()
         {
+            try
+            {
+                while (true) //fica em loop ate PC jogar a exceção de fim de execução
+                {
+                    this.ResetSignals();
+                    this.ExecuteFstCicle();
 
+                    Console.WriteLine("\n");
+                    this.ResetSignals();
+                    this.ExecuteSndCicle();
+
+                    Console.WriteLine("\n");
+                    this.ResetSignals();
+                    this.Execute3Cicle();
+
+                    if (has4cicle)
+                    {
+                        Console.WriteLine("\n");
+                        this.ResetSignals();
+                        this.Execute4Cicle();
+                    }
+                    if (has5cicle)
+                    {
+                        Console.WriteLine("\n");
+                        this.ResetSignals();
+                        this.Execute5Cicle();
+                    }
+                }
+            }
+            catch (ExecutionOverException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
         /// <summary>
         /// Executa o primeiro ciclo de uma instrucao

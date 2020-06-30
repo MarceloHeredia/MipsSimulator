@@ -56,6 +56,7 @@ namespace MipsSimulator.Processor
             if (_writeMem)
             {
                 _memory[_adress] = value;
+                Tools.Print("Escrito em memoria", "0x" + Convert.ToString(value, 16).PadLeft(8,'0'));
             }
         }
 

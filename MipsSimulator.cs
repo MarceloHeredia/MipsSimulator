@@ -34,6 +34,25 @@ namespace SimuladorMIPS
 
                 ControlBlock bloco_controle = new ControlBlock(file);
 
+                //var x = "1100100001000010";
+
+                //Console.WriteLine(x);
+
+                //var i16 = Convert.ToInt16(x, 2);
+
+                //Console.WriteLine(i16);
+
+                //var i32 = Convert.ToInt32(i16);
+
+                //Console.WriteLine(i32);
+
+                //var tst = i32 << 21;
+
+                //tst = tst >> 27;
+
+                //Console.WriteLine(tst);
+
+
                 Console.ReadKey();
             }
             catch (Exception e)

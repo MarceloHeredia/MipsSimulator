@@ -40,9 +40,14 @@ namespace MipsSimulator.Processor
                     _res = _entry1 ^ _entry2;
                     break;
                 case Operation.sll:
+                    //Manipula os 32 bits para que fiquem apenas os 5 bits necessarios para execucao
+                    _entry2 = _entry2 << 21;
+                    _entry2 = _entry2 >> 27;
                     _res = _entry1 << _entry2;
                     break;
                 case Operation.srl:
+                    _entry2 = _entry2 << 21;
+                    _entry2 = _entry2 >> 27;
                     _res = _entry1 >> _entry2;
                     break;
                 case Operation.lui:
