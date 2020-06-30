@@ -28,39 +28,42 @@ namespace SimuladorMIPS
                 else
                 {
                     Console.WriteLine("Digite o arquivo junto com o caminho completo: ");
-                    //file = Console.ReadLine();
-                    file = String.Format("C:{0}libs{0}school{0}repo{0}teste.mips",separator);
+                    file = Console.ReadLine();
                 }
 
-                ControlBlock bloco_controle = new ControlBlock(file);
+                var lines = RotinaLeituraConsole(file);
 
-                //var x = "1100100001000010";
-
-                //Console.WriteLine(x);
-
-                //var i16 = Convert.ToInt16(x, 2);
-
-                //Console.WriteLine(i16);
-
-                //var i32 = Convert.ToInt32(i16);
-
-                //Console.WriteLine(i32);
-
-                //var tst = i32 << 21;
-
-                //tst = tst >> 27;
-
-                //Console.WriteLine(tst);
-
+                ControlBlock bloco_controle = new ControlBlock(lines);
 
                 Console.ReadKey();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                Console.ReadKey();
             }
         }
-   
+        static string[] RotinaLeituraConsole(string file)
+        {
+            var fileRead = false;
+            string[] lines;
+            while (!fileRead)
+            {
+                try
+                {
+
+                    lines = File.ReadAllLines(file);
+
+                    return lines;
+                }
+                catch (FileNotFoundException e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("Digite o nome correto do arquivo com seu caminho completo");
+                    file = Console.ReadLine();
+                }
+            }
+            return new string[0];
+        }
+
     }
 }

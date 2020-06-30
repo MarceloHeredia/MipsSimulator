@@ -44,9 +44,9 @@ namespace MipsSimulator.Processor
 
         #endregion
 
-        public ControlBlock(String file)
+        public ControlBlock(String[] lines)
         {
-            dt = new DataBlock(file); 
+            dt = new DataBlock(lines);
             sPCEsc = dt.pc.SetWritePC;
             sPCEscCond = dt.pc.SetWriteCondPC;
             sIouD = dt.muxIorD.Set;
@@ -149,6 +149,13 @@ namespace MipsSimulator.Processor
             catch (ExecutionOverException ex)
             {
                 Console.WriteLine(ex.Message);
+                Console.WriteLine("Deseja consultar o bloco de registradores e de memória? s/n");
+                char resp = (char)Console.Read();
+                if (resp == 's')
+                {
+                    dt.registers.PrintRegisters();
+                    dt.memory.PrintMemory();
+                }
             }
         }
         private void InstructionExecution()
@@ -189,6 +196,13 @@ namespace MipsSimulator.Processor
             catch (ExecutionOverException ex)
             {
                 Console.WriteLine(ex.Message);
+                Console.WriteLine("Deseja consultar o bloco de registradores e de memória? s/n");
+                char resp = (char)Console.Read();
+                if (resp == 's')
+                {
+                    dt.registers.PrintRegisters();
+                    dt.memory.PrintMemory();
+                }
             }
         }
         private void AllExecution()
@@ -225,6 +239,15 @@ namespace MipsSimulator.Processor
             catch (ExecutionOverException ex)
             {
                 Console.WriteLine(ex.Message);
+                Console.WriteLine("Deseja consultar o bloco de registradores e de memória? s/n");
+                char resp = (char)Console.Read();
+                if (resp == 's')
+                {
+                    Console.WriteLine("Registradores:");
+                    dt.registers.PrintRegisters();
+                    Console.WriteLine("Memória:");
+                    dt.memory.PrintMemory();
+                }
             }
         }
         /// <summary>
@@ -423,7 +446,7 @@ namespace MipsSimulator.Processor
                     sIouD(1);
                     Tools.PrintControlSignal("IouD", 1);
                     sLerMem(true);
-                    Tools.PrintControlSignal("LerMem",1);
+                    Tools.PrintControlSignal("LerMem", 1);
                     break;
                 case 0x2B:
                     sIouD(1);

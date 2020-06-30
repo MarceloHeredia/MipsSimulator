@@ -32,7 +32,7 @@ namespace MipsSimulator.Processor
             {
                 this._adress = value;
                 //Print the new adress pointer on the memory
-                Tools.Print("Endereço", "0x" + Convert.ToString(_adress,16).PadLeft(8, '0'));
+                Tools.Print("Endereço", "0x" + Convert.ToString(_adress, 16).PadLeft(8, '0'));
             }
             get
             {
@@ -51,12 +51,15 @@ namespace MipsSimulator.Processor
         /// </summary>
         /// <param name="value">value to be written</param>
         /// <returns></returns>
-        public void WriteInMem(Int32 value)
+        public Int32 WriteInMem
         {
-            if (_writeMem)
+            set
             {
-                _memory[_adress] = value;
-                Tools.Print("Escrito em memoria", "0x" + Convert.ToString(value, 16).PadLeft(8,'0'));
+                if (_writeMem)
+                {
+                    _memory[_adress] = value;
+                    Tools.Print("Escrito em memoria", "0x" + Convert.ToString(value, 16).PadLeft(8, '0'));
+                }
             }
         }
 
@@ -79,6 +82,15 @@ namespace MipsSimulator.Processor
         public void WMFFR(UInt32 adr, Int32 data)
         {
             this._memory[adr] = data;
+        }
+
+        public void PrintMemory()
+        {
+            Console.WriteLine("[adress,data]");
+            foreach ( var pair in _memory)
+            {
+                Console.WriteLine(String.Format("[{0},{1}]","0x"+Convert.ToString(pair.Key,16).PadLeft(8,'0'),"0x"+Convert.ToString(pair.Value,16).PadLeft(8,'0')));
+            }
         }
     }
 }

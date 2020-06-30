@@ -6,8 +6,4 @@
     <StartupObject>SimuladorMIPS.MipsSimulator</StartupObject>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="mipsfile\" />
-  </ItemGroup>
-
 </Project>

@@ -61,7 +61,7 @@ namespace MipsSimulator.Processor
 
         #endregion
         //inicializar todos circuitos e fazer as respectivas conexoes de acordo 
-        public DataBlock(String file)
+        public DataBlock(String[] lines)
         {
             this.muxIorD = new MUX(2);
             this.muxRegDest = new MUX(2);
@@ -81,7 +81,7 @@ namespace MipsSimulator.Processor
             this.alu = new ALU();
             this.aluCtrl = new AluControl();
             //fill memory
-            this.finalPC = ReadFileRoutine(file, memory);
+            this.finalPC = ReadFileRoutine(lines, memory);
             this.pc = new PC(finalPC);
 
             #region instanciando delegates e preenchendo os MUX
@@ -174,11 +174,12 @@ namespace MipsSimulator.Processor
 
             Tools.IgnoreException(() => aluZero = Convert.ToBoolean(muxAluZero.Value)); //tenta pegar o valor de aluZero
 
+            memory.WriteInMem = B.Reg;
+
             if (muxPCSrc.isSet)
             {
                 this.pc.ChangePCValue(muxPCSrc.Value, aluZero); //nao pode ignorar excecao nesse metodo pois se chegar ao fim da execucao ele que encerrara
             }
-
 
         }
         public static Int32 Get4() => 4;
@@ -200,7 +201,7 @@ namespace MipsSimulator.Processor
             return String.Concat("0x", Convert.ToString(Convert.ToUInt32(binaryInstr, 2), 16).PadLeft(8, '0'));
         }
 
-        public UInt32 ReadFileRoutine(String file, Memory memo)
+        public UInt32 ReadFileRoutine(String[] lines, Memory memo)
         {
             try
             {
@@ -208,7 +209,6 @@ namespace MipsSimulator.Processor
                 UInt32 currData = Tools.iniMemData;
                 Boolean readingData = false;
 
-                String[] lines = File.ReadAllLines(file);
                 foreach (var line in lines)
                 {
                     if (line.Trim().Contains(".text") ||

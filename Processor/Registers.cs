@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 using System.Xml.XPath;
 
@@ -99,6 +100,12 @@ namespace MipsSimulator.Processor
                 }
             }
         }
-
+        public void PrintRegisters()
+        {
+            for (int i=0; i<_registers.Length; i++)
+            {
+                Console.WriteLine(String.Format("${0}  -  {1}",Convert.ToString(i).PadRight(2),"0x"+Convert.ToString(_registers[i],16).PadLeft(8,'0')));
+            }
+        }
     }
 }

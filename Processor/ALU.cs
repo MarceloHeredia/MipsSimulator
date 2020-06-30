@@ -43,11 +43,13 @@ namespace MipsSimulator.Processor
                     //Manipula os 32 bits para que fiquem apenas os 5 bits necessarios para execucao
                     _entry2 = _entry2 << 21;
                     _entry2 = _entry2 >> 27;
+                    Tools.Print("ALU (shamt)", "0x" + Convert.ToString(_entry2, 16).PadLeft(8, '0'));
                     _res = _entry1 << _entry2;
                     break;
                 case Operation.srl:
                     _entry2 = _entry2 << 21;
                     _entry2 = _entry2 >> 27;
+                    Tools.Print("ALU (shamt)", "0x" + Convert.ToString(_entry2, 16).PadLeft(8, '0'));
                     _res = _entry1 >> _entry2;
                     break;
                 case Operation.lui:
